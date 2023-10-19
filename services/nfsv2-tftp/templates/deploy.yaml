@@ -2,7 +2,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ .Chart.Name }}-claim
+  name: ioc-nfsv2-tftp-claim
 spec:
   accessModes:
     - ReadWriteMany
@@ -15,7 +15,7 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ .Chart.Name }}-autosave-claim
+  name: autosave-volume-claim
 spec:
   accessModes:
     - ReadWriteMany
@@ -27,28 +27,26 @@ spec:
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: {{ .Chart.Name }}
+  name: nfstftpserver
   labels:
-    app: {{ .Chart.Name }}
-    ioc-file-server: "true"
+    app: nfstftpserver
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}
+      app: nfstftpserver
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}
-        ioc-file-server: "true"
+        app: nfstftpserver
     spec:
       volumes:
         - name: ioc-nfsv2-tftp-volume
           persistentVolumeClaim:
-            claimName: {{ .Chart.Name }}-claim
+            claimName: ioc-nfsv2-tftp-claim
         - name: autosave-volume
           persistentVolumeClaim:
-            claimName: {{ .Chart.Name }}-autosave-claim
+            claimName: autosave-volume-claim
       containers:
         - name: server
           image: {{ .Values.image }}
@@ -81,9 +79,9 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: {{ .Chart.Name }}
+  name: nfstftpserver
   labels:
-    app: {{ .Chart.Name }}
+    app: nfstftpserver
 spec:
   type: LoadBalancer
   externalTrafficPolicy: Local
@@ -106,7 +104,7 @@ spec:
       targetPort: 69
   sessionAffinity: None
   selector:
-    app: {{ .Chart.Name }}
+    app: nfstftpserver
   loadBalancerIP: "{{ .Values.loadBalancerIP }}"
 
 ---
@@ -115,26 +113,26 @@ spec:
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: {{ .Chart.Name }}-transfer-station
+  name: file-transfer-station
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ .Chart.Name }}-transfer-station
+      app: file-transfer-station
   template:
     metadata:
       labels:
-        app: {{ .Chart.Name }}-transfer-station
+        app: file-transfer-station
     spec:
       volumes:
         - name: ioc-nfsv2-tftp-volume
           persistentVolumeClaim:
-            claimName: {{ .Chart.Name }}-claim
-        - name: {{ .Chart.Name }}-autosave-volume
+            claimName: ioc-nfsv2-tftp-claim
+        - name: autosave-volume
           persistentVolumeClaim:
-            claimName: {{ .Chart.Name }}-autosave-claim
+            claimName: autosave-volume-claim
       containers:
-        - name: {{ .Chart.Name }}-transfer-station
+        - name: file-transfer-station
           image: debian:latest
           command: ["/bin/sleep"]
           args: ["infinity"]
@@ -150,4 +148,4 @@ spec:
             - mountPath: "/iocs"
               name: ioc-nfsv2-tftp-volume
             - mountPath: "/autosave"
-              name: {{ .Chart.Name }}-autosave-volume
+              name: autosave-volume
