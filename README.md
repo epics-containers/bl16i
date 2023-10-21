@@ -5,7 +5,7 @@ This is where you will define all IOC instances for the beamline/domain.
 
 The IOC instance will take the form of a subfolder in the iocs folder.
 This subfolder will container a `values.yaml`` file with at a minimum the
-following (example):
+URI of the generic IOC container image to use e.g.:
 
 ```yaml
 image: ghcr.io/epics-containers/ioc-adsimdetector-linux-runtime:23.10.1
@@ -15,7 +15,7 @@ This yaml file may also override any of the settings in the beamline
 helm chart's values file. See [values.yaml](beamline/values.yaml)
 
 
-This determins the Generic IOC image that is used to launch the instance.
+This defines the Generic IOC image that is used to launch the instance.
 
 In addition  to `values.yaml` there will be a `config` folder which will
 be mounted into the Generic IOC at runtime at `/epics/ioc/config``.
@@ -24,3 +24,17 @@ into a specific IOC instance.
 
 For the details of the contents of the config folder see the default
 [start.sh](./iocs/blxxi-ea-ioc-01/config/start.sh)
+
+
+How To Use This Template Project
+================================
+
+TODO: giles sun.
+
+DLS is
+  ixx -> i16
+  xxi -> 16i
+
+etc.
+
+Others are ...
