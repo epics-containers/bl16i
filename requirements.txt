@@ -1,2 +1,2 @@
 # TODO using dev for the moment. Should be a pin to the current release
-epics-containers-cli==2.4.1
+epics-containers-cli==2.6.4
